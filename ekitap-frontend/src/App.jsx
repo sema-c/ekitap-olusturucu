@@ -32,7 +32,6 @@ function App() {
   const [sayfaSayisi, setSayfaSayisi] = useState(null);
   const [aktifAsama, setAktifAsama] = useState(0);
 
-  // Yükleme sırasında aşama göstergesini ilerletir (görsel amaçlı, tahmini)
   useEffect(() => {
     if (asama !== ASAMA.YUKLENIYOR) return;
 
@@ -101,7 +100,6 @@ function App() {
             mesaj = hataJson.hata;
           }
         } catch (parseErr) {
-          // yoksay
         }
         throw new Error(mesaj);
       }

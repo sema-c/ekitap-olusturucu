@@ -9,7 +9,6 @@ namespace EKitapAPI.Services
     {
         private const float MarginCm = 2f;
 
-        // ---- Tek bir bildirinin içeriğini sayfaya döken ortak şablon ----
         private void BildiriIcerigiOlustur(IContainer container, BildiriIcerik bildiri)
         {
             container.Column(column =>
@@ -30,7 +29,6 @@ namespace EKitapAPI.Services
             });
         }
 
-        // ---- İçindekiler sayfasının şablonu ----
         private void IcindekilerOlustur(
             IContainer container,
             string kitapAdi,
@@ -58,7 +56,6 @@ namespace EKitapAPI.Services
             });
         }
 
-        // ---- Verilen bir içerik bloğunun tek başına kaç sayfa tuttuğunu ölçer ----
         private int SayfaSayisiOlc(Action<IContainer> icerikOlusturucu)
         {
             var pdfBytes = Document.Create(container =>
@@ -68,8 +65,6 @@ namespace EKitapAPI.Services
                     page.Size(PageSizes.A4);
                     page.Margin(MarginCm, Unit.Centimetre);
                     page.Content().Element(icerikOlusturucu);
-                    // Gerçek üretimdeki footer ile birebir aynı alanı kaplaması lazım,
-                    // yoksa sayfa sayımı gerçek üretimden az çıkar (kayma oluşur).
                     page.Footer().AlignCenter().Text(t => t.CurrentPageNumber());
                 });
             }).GeneratePdf();
@@ -78,19 +73,15 @@ namespace EKitapAPI.Services
             return olculenPdf.NumberOfPages;
         }
 
-        // ---- Tüm kitabı üretir: ölçüm + gerçek üretim ----
         public byte[] KitapPdfOlustur(List<BildiriIcerik> bildiriler, string kitapAdi)
         {
-            // 1) Her bildirinin tek başına kaç sayfa tuttuğunu ölç
             var sayfaSayilari = bildiriler
                 .Select(b => SayfaSayisiOlc(c => BildiriIcerigiOlustur(c, b)))
                 .ToList();
 
-            // 2) İçindekiler taslağının (geçici numaralarla) kaç sayfa tuttuğunu ölç
             var taslakGirdiler = bildiriler.Select(b => (b.Baslik, 1)).ToList();
             int tocSayfaSayisi = SayfaSayisiOlc(c => IcindekilerOlustur(c, kitapAdi, taslakGirdiler));
 
-            // 3) Gerçek başlangıç sayfalarını hesapla
             var gercekGirdiler = new List<(string Baslik, int BaslangicSayfasi)>();
             int suankiSayfa = tocSayfaSayisi + 1;
             for (int i = 0; i < bildiriler.Count; i++)
@@ -99,7 +90,6 @@ namespace EKitapAPI.Services
                 suankiSayfa += sayfaSayilari[i];
             }
 
-            // 4) Asıl kitabı tek sayfa akışı içinde, aralara sayfa sonu koyarak üret
             var document = Document.Create(container =>
             {
                 container.Page(page =>
@@ -125,21 +115,5 @@ namespace EKitapAPI.Services
             return document.GeneratePdf();
         }
 
-        // ---- Eski tekil test fonksiyonu (hâlâ dursun, işimize yarayabilir) ----
-        public byte[] TekBildiriTestPdfUret(BildiriIcerik bildiri)
-        {
-            var document = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(MarginCm, Unit.Centimetre);
-                    page.Content().Element(c => BildiriIcerigiOlustur(c, bildiri));
-                    page.Footer().AlignCenter().Text(t => t.CurrentPageNumber());
-                });
-            });
-
-            return document.GeneratePdf();
-        }
     }
 }

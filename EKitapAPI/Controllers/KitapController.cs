@@ -32,7 +32,6 @@ namespace EKitapAPI.Controllers
         private string WebRoot =>
             _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-        // 1) Yeni kitap oluştur: ad + tam olarak 10 adet .docx
         [HttpPost]
         [RequestSizeLimit(100_000_000)]
         public async Task<IActionResult> KitapOlustur(
@@ -55,7 +54,7 @@ namespace EKitapAPI.Controllers
 
             var kitap = new Kitap { Ad = ad, Durum = KitapDurum.Pending };
             _db.Kitaplar.Add(kitap);
-            await _db.SaveChangesAsync(); // Id üretilsin diye önce kaydediyoruz
+            await _db.SaveChangesAsync();
 
             var kitapKlasoru = Path.Combine(WebRoot, "uploads", kitap.Id.ToString());
             Directory.CreateDirectory(kitapKlasoru);
@@ -84,7 +83,6 @@ namespace EKitapAPI.Controllers
             return Ok(new { kitap.Id, kitap.Ad, Durum = kitap.Durum.ToString() });
         }
 
-        // 2) "Kitabı Oluştur" işlemini tetikler
         [HttpPost("{id}/olustur")]
         public async Task<IActionResult> KitabiUret(int id)
         {
@@ -134,7 +132,6 @@ namespace EKitapAPI.Controllers
             }
         }
 
-        // 3) Durum sorgula
         [HttpGet("{id}")]
         public async Task<IActionResult> DurumSorgula(int id)
         {
@@ -158,7 +155,6 @@ namespace EKitapAPI.Controllers
             });
         }
 
-        // 4) PDF indir
         [HttpGet("{id}/indir")]
         public async Task<IActionResult> PdfIndir(int id)
         {
@@ -177,7 +173,6 @@ namespace EKitapAPI.Controllers
             return File(bytes, "application/pdf", $"{kitap.Ad}.pdf");
         }
 
-        // 5) Tüm kitapları listele (frontend'de "geçmiş kitaplar" gösterebilmek için faydalı)
         [HttpGet]
         public async Task<IActionResult> TumKitaplar()
         {

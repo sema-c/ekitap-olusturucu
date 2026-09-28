@@ -13,20 +13,14 @@ namespace EKitapAPI.Services
 
     public class WordService
     {
-        // E-posta: standart e-posta formatı
         private static readonly Regex EmailRegex = new(
             @"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
             RegexOptions.Compiled);
 
-        // Telefon: +90 / 0 öneki opsiyonel, alan kodu parantez içinde olabilir,
-        // ayraçlar boşluk/tire/nokta olabilir. ORCID (16 haneli, 4x4 grup) ile karışmaması
-        // için başında/sonunda başka rakam olmamasını (?<!\d) / (?!\d) ile garanti ediyoruz.
         private static readonly Regex PhoneRegex = new(
             @"(?<!\d)(?:\+90[\s\-]?|0[\s\-]?)?\(?\s?0?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{2}[\s.\-]?\d{2}(?!\d)",
             RegexOptions.Compiled);
 
-        // E-posta/telefon silindikten sonra geride kalan boş etiketleri
-        // ("E-posta:", "Tel:" gibi) temizlemek için.
         private static readonly Regex EtiketRegex = new(
             @"(E-posta|Eposta|E-mail|Email|Mail|İletişim|İrtibat|Tel\.No|Telefon|GSM|Cep telefonu|Cep|Mobile|Tel)\s*:?\s*(?=$|\||/|-|;|,|\z)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -42,7 +36,6 @@ namespace EKitapAPI.Services
 
             var paragraphs = body.Elements<Paragraph>().ToList();
 
-            // Stil ID -> gerçek stil adı eşlemesini çıkar (örn. "KonuBal" -> "Title")
             var stilAdlari = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var stylesPart = mainPart?.StyleDefinitionsPart;
             if (stylesPart?.Styles != null)
@@ -80,7 +73,6 @@ namespace EKitapAPI.Services
             Dictionary<string, string> stilAdlari,
             string dosyaAdi)
         {
-            // 1) "Title" görünen adına sahip stildeki paragrafı ara
             foreach (var p in paragraphs)
             {
                 var styleId = p.ParagraphProperties?.ParagraphStyleId?.Val?.Value;
@@ -94,7 +86,6 @@ namespace EKitapAPI.Services
                 }
             }
 
-            // 2) Bulunamazsa: ilk dolu paragrafı başlık say
             var ilkDoluParagraf = paragraphs
                 .Select(p => p.InnerText.Trim())
                 .FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
@@ -102,7 +93,6 @@ namespace EKitapAPI.Services
             if (!string.IsNullOrWhiteSpace(ilkDoluParagraf))
                 return Temizle(ilkDoluParagraf);
 
-            // 3) Son çare: dosya adından türet
             return Path.GetFileNameWithoutExtension(dosyaAdi).Replace('_', ' ');
         }
 
@@ -112,7 +102,6 @@ namespace EKitapAPI.Services
             sonuc = PhoneRegex.Replace(sonuc, "");
             sonuc = EtiketRegex.Replace(sonuc, "");
 
-            // Ardışık ayraçları (| / - ; , boşluklarla karışık) tek karaktere indir
             sonuc = Regex.Replace(sonuc, @"[|/;,-]\s*(?:[|/;,-]\s*)+", m => m.Value.Trim()[0].ToString());
 
             sonuc = sonuc.Trim(' ', '\t', '|', '/', '-', ';', ',');

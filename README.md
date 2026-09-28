@@ -101,13 +101,13 @@ Bu yaklaşım kolaylık amacıyla seçilmiştir (case dokümanında belirtildiğ
 ## Kullanılan Kütüphaneler
 
 **Backend:**
-- `DocumentFormat.OpenXml` — Word (.docx) dosyalarından metin ve stil bilgisi okuma
+- `DocumentFormat.OpenXml` — Word dosyalarından metin ve stil bilgisi okuma
 - `QuestPDF` — PDF üretimi (Community lisansı)
 - `PdfPig` — Ara ölçüm aşamasında üretilen geçici PDF'lerin sayfa sayısını okumak için
 - `Microsoft.EntityFrameworkCore.SqlServer` — MSSQL erişimi ve migration
 
 **Frontend:**
-- `react-pdf` (PDF.js tabanlı) — üretilen PDF'in tarayıcıda önizlenmesi
+- `react-pdf` üretilen PDF'in tarayıcıda önizlenmesi
 - Vite — geliştirme ortamı
 
 ---
@@ -115,18 +115,18 @@ Bu yaklaşım kolaylık amacıyla seçilmiştir (case dokümanında belirtildiğ
 ## İşleme Akışı
 
 1. Kullanıcı kitap adı girer, tam olarak 10 adet `.docx` seçer.
-2. `POST /api/Kitap` — dosyalar `wwwroot/uploads/{kitapId}/` altına kaydedilir, veritabanında `Kitaplar` (Durum: Pending) ve `Bildiriler` kayıtları oluşturulur.
+2. `POST /api/Kitap` — dosyalar `wwwroot/uploads/{kitapId}/` altına kaydedilir, veritabanında `Kitaplar` ve `Bildiriler` kayıtları oluşturulur.
 3. `POST /api/Kitap/{id}/olustur` tetiklenir, Durum `Processing` olur:
    - Her `.docx` sırayla okunur (`WordService`): başlık, Word'ün "Title" stiline sahip paragraftan çıkarılır (bulunamazsa ilk dolu paragraf, o da yoksa dosya adı kullanılır).
-   - Her paragraftaki e-posta ve telefon numaraları regex ile temizlenir (bkz. aşağıdaki bölüm).
-   - Her bildirinin PDF'te kaç sayfa tutacağı, tek başına geçici olarak render edilip `PdfPig` ile sayılarak ölçülür (footer alanı dahil, gerçek üretimle birebir aynı koşullarda).
+   - Her paragraftaki e-posta ve telefon numaraları regex ile temizlenir.
+   - Her bildirinin PDF'te kaç sayfa tutacağı, tek başına geçici olarak render edilip `PdfPig` ile sayılarak ölçülür.
    - Bu ölçümlerden yola çıkılarak her bildirinin İçindekiler'deki gerçek başlangıç sayfası hesaplanır.
    - Tüm bildiriler, doğru sayfa numaralarıyla İçindekiler + sırasıyla birleştirilerek tek PDF olarak üretilir (`QuestPDF`), `wwwroot/output/{kitapId}.pdf` altına yazılır.
    - Durum `Completed` olur, `PdfDosyaYolu` kaydedilir. Herhangi bir aşamada hata olursa Durum `Failed` olur, `HataMesaji` doldurulur.
-4. `GET /api/Kitap/{id}` — durum ve bildiri listesi sorgulanır (frontend loading/tamamlanma ekranı için).
+4. `GET /api/Kitap/{id}` — durum ve bildiri listesi sorgulanır.
 5. `GET /api/Kitap/{id}/indir` — üretilen PDF indirilir/önizlenir.
 
-Bildiriler **yükleme sırasına göre** birleştirilir (kullanıcının seçtiği/eklediği sıra korunur).
+Bildiriler **yükleme sırasına göre** birleştirilir.
 
 ---
 
@@ -136,9 +136,9 @@ E-posta ve telefon numaraları, sunucu tarafında (`WordService.Temizle`), her p
 
 **E-posta regex:** standart e-posta formatını yakalar (`kullanici@alan.uzanti`).
 
-**Telefon regex:** Türkiye telefon formatlarının farklı yazım biçimlerini kapsar — `+90` veya `0` öneki (opsiyonel), alan kodu parantez içinde olabilir, ayraç olarak boşluk/tire/nokta kullanılabilir. ORCID gibi 16 haneli, 4'erli gruplu numaralarla (`0000-0001-1000-0001`) karışmaması için sınır kontrolü (`(?<!\d)...(?!\d)`) uygulanmıştır.
+**Telefon regex:** Türkiye telefon formatlarının farklı yazım biçimlerini kapsar — `+90` veya `0` öneki, alan kodu parantez içinde olabilir, ayraç olarak boşluk/tire/nokta kullanılabilir. ORCID gibi 16 haneli, 4'erli gruplu numaralarla (`0000-0001-1000-0001`) karışmaması için sınır kontrolü (`(?<!\d)...(?!\d)`) uygulanmıştır.
 
-Test edilen örnek formatlar (gerçek test verisinden):
+Test edilen örnek formatlar:
 | Orijinal | Sonuç |
 |---|---|
 | `Tel: 0500 000 00 01` | temizlendi |
@@ -153,25 +153,25 @@ Test edilen örnek formatlar (gerçek test verisinden):
 | `Cep telefonu: +90 500 000 00 10` | temizlendi |
 | `ORCID: 0000-0001-1000-0001` | **bozulmadan korundu** |
 
-E-posta/telefon silindikten sonra geride kalan boş etiketler (örn. `"E-posta: | Tel: |"`) da ayrıca temizlenir; satırda gerçek bilgi (örn. ORCID) kalmıyorsa satırın tamamı PDF'te gösterilmez.
+E-posta/telefon silindikten sonra geride kalan boş etiketler (örn. `"E-posta: | Tel: |"`) da ayrıca temizlenir; satırda gerçek bilgi kalmıyorsa satırın tamamı PDF'te gösterilmez.
 
-İki yazarlı bildirilerde (birden fazla iletişim satırı olan dosyalarda) tüm paragraflar taranır, tek bir satıra bağımlı kalınmaz.
+İki yazarlı bildirilerde tüm paragraflar taranır, tek bir satıra bağımlı kalınmaz.
 
 ---
 
 ## Masaüstü ve Mobil Tasarım Kararları
 
 - Tek sütunlu, ortalanmış, maksimum 640px genişliğinde bir düzen kullanıldı; bu sayede ek bir medya sorgusu yazmadan büyük ekranlarda da mobilde de doğal olarak okunabilir kalıyor.
-- 480px altı ekranlar için kart iç boşlukları ve dosya seçme alanının yönü (yatay → dikey) ayrıca ayarlandı.
+- 480px altı ekranlar için kart iç boşlukları ve dosya seçme alanının yönü ayrıca ayarlandı.
 - Dosya listesi, kitaptaki gerçek bölüm sırasını yansıttığı için numaralandırılmış liste (`<ol>`) olarak gösterildi.
 - Yükleme durumunda gerçek zamanlı sunucu ilerlemesi yerine, işlemin bilinen aşamalarını (okuma → temizleme → sayfa hesaplama → birleştirme) sırayla gösteren görsel bir aşama göstergesi kullanıldı.
-- Klavye ile gezinme için görünür focus stilleri (`:focus-visible`) eklendi, `prefers-reduced-motion` tercihine saygı gösterildi.
+- Klavye ile gezinme için görünür focus stilleri (`:focus-visible`) eklendi.
 
 ---
 
 ## Bilinen Eksikler
 
-Yok — case'de zorunlu tutulan tüm maddeler (tek PDF birleştirme, doğru sayfa numaralı içindekiler, iletişim bilgisi temizliği, migration ile kurulan MSSQL şeması, React yükleme/loading/hata akışı, PDF görüntüleme ve indirme) tamamlanmış ve gerçek test verisiyle (10 örnek bildiri) doğrulanmıştır.
+Yok — case'de zorunlu tutulan tüm maddeler tamamlanmış ve gerçek test verisiyle doğrulanmıştır.
 
 ---
 
@@ -183,4 +183,4 @@ Geliştirme sürecinde Anthropic'in Claude asistanından şu konularda destek al
 - **Arayüz tasarımı:** CSS ile renk paleti ve genel görsel tasarım konusunda Claude'dan öneriler alınmıştır.
 - **Hata çözümü:** PDF üretiminde karşılaşılan Türkçe karakter sorunu Claude ile birlikte analiz edilerek çözülmüştür.
 
-Claude'un önerileri geliştirici tarafından değerlendirilmiş, projeye uyarlanmış ve gerçek test dosyalarıyla doğrulanmıştır. Tüm kod, geliştirici tarafından kendi ortamında çalıştırılmış, gerçek 10 test dosyasıyla defalarca test edilmiş ve karşılaşılan hatalar (örn. font uyumsuzluğu, sayfa numarası kayması, stil ID eşleşme sorunu) birlikte analiz edilip düzeltilmiştir. Nihai kod tabanı, mantığı geliştirici tarafından anlaşılmış ve doğrulanmış durumdadır.
+Claude'un önerileri geliştirici tarafından değerlendirilmiş, projeye uyarlanmış ve gerçek test dosyalarıyla doğrulanmıştır. Tüm kod, geliştirici tarafından kendi ortamında çalıştırılmış, gerçek 10 test dosyasıyla defalarca test edilmiş ve karşılaşılan hatalar birlikte analiz edilip düzeltilmiştir. Nihai kod tabanı, mantığı geliştirici tarafından anlaşılmış ve doğrulanmış durumdadır.

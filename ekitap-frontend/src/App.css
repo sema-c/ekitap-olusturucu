@@ -211,7 +211,6 @@ input:focus-visible,
   outline-offset: 2px;
 }
 
-/* --- Yukleme durumu --- */
 
 .yukleme-alani {
   text-align: center;
@@ -296,7 +295,6 @@ input:focus-visible,
   background: var(--success);
 }
 
-/* --- Hata durumu --- */
 
 .hata-alani {
   border-left: 3px solid var(--error);
@@ -316,7 +314,6 @@ input:focus-visible,
   margin: 0 0 1.2rem;
 }
 
-/* --- Sonuc durumu --- */
 
 .sonuc-basligi {
   display: flex;

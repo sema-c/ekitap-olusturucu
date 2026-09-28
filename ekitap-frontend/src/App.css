@@ -1,0 +1,377 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap');
+
+:root {
+  --bg: #10162b;
+  --surface: #171e38;
+  --surface-alt: #1f2847;
+  --ink: #edebe3;
+  --ink-muted: #a9afc3;
+  --accent: #c9a227;
+  --accent-hover: #e0b93a;
+  --line: #2a3356;
+  --error: #c1543c;
+  --error-bg: rgba(193, 84, 60, 0.12);
+  --success: #6fa97a;
+  --font-serif: 'Lora', Georgia, serif;
+  --font-sans: 'Inter', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.sayfa {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+}
+
+.baslik-alani {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.kitap-ikon {
+  width: 40px;
+  height: 40px;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.baslik-alani h1 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 2rem;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.alt-baslik {
+  color: var(--ink-muted);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.kart {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2rem;
+}
+
+.form-alani {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.alan {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.alan-etiketi {
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sayac {
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+input[type='text'] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  padding: 0.5rem 0.1rem;
+  transition: border-color 0.15s ease;
+}
+
+input[type='text']:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+input[type='text']::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.6;
+}
+
+.gizli-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.dosya-secici {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.dosya-buton {
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 0.55rem 1.1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.dosya-buton:hover {
+  border-color: var(--accent);
+}
+
+.dosya-ipucu {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.dosya-listesi {
+  margin: 0;
+  padding-left: 1.4rem;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.dosya-listesi li::marker {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+button,
+.ana-buton,
+.ikincil-buton {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  padding: 0.85rem 1.4rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.ana-buton {
+  background: var(--accent);
+  color: #171426;
+  align-self: flex-start;
+  transition: background 0.15s ease;
+}
+
+.ana-buton:hover {
+  background: var(--accent-hover);
+}
+
+.ikincil-buton {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.ikincil-buton:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button:focus-visible,
+.ana-buton:focus-visible,
+.ikincil-buton:focus-visible,
+input:focus-visible,
+.dosya-buton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- Yukleme durumu --- */
+
+.yukleme-alani {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.sayfa-cevirme {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 2rem;
+}
+
+.sayfa-cevirme span {
+  width: 10px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: cevir 1.2s ease-in-out infinite;
+}
+
+.sayfa-cevirme span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.sayfa-cevirme span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes cevir {
+
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scaleY(1.8);
+    opacity: 1;
+  }
+}
+
+.asama-listesi {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  text-align: left;
+}
+
+.asama {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.asama-isareti {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  flex-shrink: 0;
+}
+
+.asama.aktif {
+  color: var(--ink);
+}
+
+.asama.aktif .asama-isareti {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.asama.tamamlandi .asama-isareti {
+  border-color: var(--success);
+  background: var(--success);
+}
+
+/* --- Hata durumu --- */
+
+.hata-alani {
+  border-left: 3px solid var(--error);
+  background: var(--error-bg);
+  padding: 1.4rem 1.6rem;
+  border-radius: 4px;
+}
+
+.hata-alani h2 {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem;
+}
+
+.hata-alani p {
+  color: var(--ink);
+  margin: 0 0 1.2rem;
+}
+
+/* --- Sonuc durumu --- */
+
+.sonuc-basligi {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.sonuc-basligi h2 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.sayfa-etiketi {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.indir-buton {
+  margin-bottom: 1.4rem;
+}
+
+.pdf-cerceve {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow-y: auto;
+  max-height: 560px;
+  margin-bottom: 1.4rem;
+  background: var(--surface-alt);
+}
+
+.pdf-durum-metni {
+  color: var(--ink-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 480px) {
+  .sayfa {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .kart {
+    padding: 1.4rem;
+  }
+
+  .dosya-secici {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sayfa-cevirme span {
+    animation: none;
+  }
+}

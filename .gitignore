@@ -1,0 +1,15 @@
+# .NET
+EKitapAPI/bin/
+EKitapAPI/obj/
+EKitapAPI/wwwroot/uploads/
+EKitapAPI/wwwroot/output/
+
+# Node / React
+ekitap-frontend/node_modules/
+ekitap-frontend/dist/
+
+# IDE / OS
+.vs/
+.vscode/
+*.user
+.DS_Store

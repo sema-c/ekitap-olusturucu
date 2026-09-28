@@ -1,0 +1,6 @@
+@EKitapAPI_HostAddress = http://localhost:5232
+
+GET {{EKitapAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -183,4 +183,4 @@ Geliştirme sürecinde Anthropic'in Claude asistanından şu konularda destek al
 - **Arayüz tasarımı:** CSS ile renk paleti ve genel görsel tasarım konusunda Claude'dan öneriler alınmıştır.
 - **Hata çözümü:** PDF üretiminde karşılaşılan Türkçe karakter sorunu Claude ile birlikte analiz edilerek çözülmüştür.
 
-Claude'un önerileri geliştirici tarafından değerlendirilmiş, projeye uyarlanmış ve gerçek test dosyalarıyla doğrulanmıştır. Tüm kod, geliştirici tarafından kendi ortamında çalıştırılmış, gerçek 10 test dosyasıyla defalarca test edilmiş ve karşılaşılan hatalar birlikte analiz edilip düzeltilmiştir. Nihai kod tabanı, mantığı geliştirici tarafından anlaşılmış ve doğrulanmış durumdadır.
+Claude'un önerileri geliştirici tarafından değerlendirilmiş ve projeye uyarlanmıştır. Karşılaşılan hatalar birlikte analiz edilip düzeltilmiştir.
